@@ -1,0 +1,19 @@
+{
+    "bridge": {
+        "name": "Homebridge",
+        "username": "CC:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "031-45-154"
+    },
+
+    "description": "Bla Bla Bla",
+
+    "accessories": [{
+        "accessory": "Struct-RGB",
+        "name": "RGB Bulb",
+        "ip": "10.0.0.3",
+        "port": "6678"
+    }],
+
+    "platforms": []
+}
