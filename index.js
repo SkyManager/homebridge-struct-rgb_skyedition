@@ -2,6 +2,7 @@ var colorsys = require('colorsys');
 //var jspack = require('jspack').jspack;
 //var netcat = require('node-netcat');
 var Service, Characteristic;
+//var exec = require('child_process').exec;
 var spawn = require("child_process").spawn;
 
 module.exports = function( homebridge ) {
@@ -23,7 +24,6 @@ function RgbAccessory( log, config ) {
   this.ch = config.ch;
   this.ip = config.ip;
   this.path = config.path;
-
   this.log( "Initialized '" + this.name + " - " + this.ip + ":" + this.ch + "'" );
 }
 
@@ -86,9 +86,9 @@ RgbAccessory.prototype.getServices = function() {
     .addCharacteristic( Characteristic.Brightness )
     .on( 'get', function( callback ) {
       var process_get = spawn('python',[bulb.brightness_path, bulb.ip, bulb.ch]);
-      process_get.stdout.on('data', function (data){
+        process_get.stdout.on('data', function (data){
         bulb.brightness = data;
-        bulb.log("brightness get: " + parseFloat(bulb.brightness));
+        bulb.log("get brightness: " + parseFloat(bulb.brightness));
         callback( null, parseFloat(bulb.brightness));
       });
       process_get.stderr.on('data', (data) => {
@@ -109,11 +109,10 @@ RgbAccessory.prototype.getServices = function() {
   lightbulbService
     .addCharacteristic( Characteristic.Hue )
     .on( 'get', function( callback ) {
-      var process_get = spawn('python',[bulb.hue_path, this.ip, this.ch, data]);
-      bulb.log("hue: " + bulb.hue);
+      var process_get = spawn('python',[bulb.hue_path, bulb.ip, bulb.ch]);
       process_get.stdout.on('data', function (data){
         bulb.hue = data;
-        bulb.log("hue get: " + parseFloat(bulb.hue));
+        bulb.log("get hue: " + parseFloat(bulb.hue));
         callback( null, parseFloat(bulb.hue));
       });
       process_get.stderr.on('data', (data) => {
@@ -122,7 +121,7 @@ RgbAccessory.prototype.getServices = function() {
       process_get.on('close', (code) => {
         console.log(`child process exited with code ${code}`);
       });
-      //callback( null, bulb.hue);
+      //callback( null, bulb.hue);//	del
     } )
     .on( 'set', function( value, callback ) {
       bulb.hue = value;
@@ -134,7 +133,7 @@ RgbAccessory.prototype.getServices = function() {
   lightbulbService
     .addCharacteristic( Characteristic.Saturation )
     .on( 'get', function( callback ) {
-      callback( null, bulb.saturation );
+      callback( null, bulb.saturation);
     } )
     .on( 'set', function( value, callback ) {
       bulb.saturation = value;
